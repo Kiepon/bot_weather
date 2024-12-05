@@ -5,7 +5,8 @@ from aiogram.fsm.context import FSMContext
 
 from keyboards.inline import check_weather_inline
 
-import requests
+import aiohttp
+import asyncio
 import os
 
 from dotenv import load_dotenv
@@ -38,11 +39,12 @@ async def input_city(callback: types.CallbackQuery, state: FSMContext):
 async def check_weather(message: types.Message, state: FSMContext):
     city = message.text
     try:
-        url = requests.get(f"https://api.openweathermap.org/data/2.5/weather?q={city}&lang=ru&units=metric&appid={weather_api}")
-        data = url.json()
-        temp = int(data['main']['temp'])
-        humidity = data['main']['humidity']
-        description = data['weather'][0]['description']
+        async with aiohttp.ClientSession() as session:
+            async with session.get(f"https://api.openweathermap.org/data/2.5/weather?q={city}&lang=ru&units=metric&appid={weather_api}") as response:
+                data = await response.json()
+                temp = int(data['main']['temp'])
+                humidity = data['main']['humidity']
+                description = data['weather'][0]['description']
         
         print(data)
         await message.reply(
