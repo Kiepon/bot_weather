@@ -46,7 +46,7 @@ async def check_weather(message: types.Message, state: FSMContext):
                 humidity = data['main']['humidity']
                 description = data['weather'][0]['description']
         
-        print(data)
+        #print(data)
         await message.reply(
             f"Температура: {temp}°C\n"
             f"Влажность: {humidity}%\n"
